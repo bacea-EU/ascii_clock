@@ -10,18 +10,17 @@ COLORS = {
     "-y": "\033[93m",  # Yellow
     "-m": "\033[95m",  # Magenta
     "-c": "\033[96m",  # Cyan
-    "-w": "\033[97m",  # White (default)
-    "reset": "\033[0m"  # Reset color
+    "-w": "\033[97m",  # White
 }
 
-# Default color
+#default color
 selected_color = COLORS["-w"]
 
-# Check if a color argument is provided
+#color argument
 if len(sys.argv) > 1 and sys.argv[1] in COLORS:
     selected_color = COLORS[sys.argv[1]]
 
-# ASCII art for digits 0-9 and ":"
+
 digits = {
     "0": [
         " ███  ",
@@ -103,7 +102,6 @@ digits = {
 }
 
 def clear_screen():
-    """Clear the terminal screen."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def display_time():
@@ -116,7 +114,6 @@ def display_time():
             for i in range(5):
                 lines[i] += digits[digit][i] + "  "
 
-        # Print the colored ASCII clock
         for line in lines:
             print(selected_color + line + COLORS["reset"])
 
