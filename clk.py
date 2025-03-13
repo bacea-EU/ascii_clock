@@ -11,16 +11,17 @@ COLORS = {
     "-m": "\033[95m",  # Magenta
     "-c": "\033[96m",  # Cyan
     "-w": "\033[97m",  # White
+    "reset": "\033[0m"  # Reset color
 }
 
-#default color
+# Default color
 selected_color = COLORS["-w"]
 
-#color argument
+# Color argument
 if len(sys.argv) > 1 and sys.argv[1] in COLORS:
     selected_color = COLORS[sys.argv[1]]
 
-
+# Digit representation
 digits = {
     "0": [
         " ███  ",
@@ -30,8 +31,8 @@ digits = {
         " ███  "
     ],
     "1": [
+        "   █  ",
         "  ██  ",
-        " ███  ",
         "   █  ",
         "   █  ",
         "  ███ "
@@ -105,19 +106,25 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def display_time():
+    last_time = ""
     while True:
         current_time = time.strftime("%H:%M:%S")
-        clear_screen()
+        
+        if current_time != last_time:  # Update only if time has changed
+            clear_screen()
+            lines = ["", "", "", "", ""]
+            
+            for digit in current_time:
+                for i in range(5):
+                    lines[i] += digits[digit][i] + "  "
+            
+            for line in lines:
+                print(selected_color + line + COLORS["reset"])
+            
+            last_time = current_time  # Store last displayed time
 
-        lines = ["", "", "", "", ""]
-        for digit in current_time:
-            for i in range(5):
-                lines[i] += digits[digit][i] + "  "
-
-        for line in lines:
-            print(selected_color + line + COLORS["reset"])
-
-        time.sleep(1)
+def main():
+    display_time()
 
 if __name__ == "__main__":
-    display_time()
+    main()
