@@ -1,6 +1,9 @@
 import time
 import os
 import sys
+import curses
+
+# !!! pip install windows-curses !!!
 
 # ANSI color codes
 COLORS = {
@@ -11,16 +14,17 @@ COLORS = {
     "-m": "\033[95m",  # Magenta
     "-c": "\033[96m",  # Cyan
     "-w": "\033[97m",  # White
+    "reset": "\033[0m"  # Reset color
 }
 
-#default color
+# Default color
 selected_color = COLORS["-w"]
 
-#color argument
+# Color argument
 if len(sys.argv) > 1 and sys.argv[1] in COLORS:
     selected_color = COLORS[sys.argv[1]]
 
-
+# Digit representation
 digits = {
     "0": [
         " ███  ",
@@ -30,8 +34,8 @@ digits = {
         " ███  "
     ],
     "1": [
+        "   █  ",
         "  ██  ",
-        " ███  ",
         "   █  ",
         "   █  ",
         "  ███ "
@@ -101,23 +105,33 @@ digits = {
     ]
 }
 
-def clear_screen():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-def display_time():
+def display_time(stdscr):
+    curses.curs_set(0)  # Hide cursor
+    stdscr.nodelay(1)   # Non-blocking input
+    stdscr.timeout(100) # Refresh rate (100ms for smoothness)
+    last_time = ""
     while True:
         current_time = time.strftime("%H:%M:%S")
-        clear_screen()
+        
+        if current_time != last_time:  # Update only if time has changed
+            stdscr.clear()
+            lines = ["", "", "", "", ""]
+            
+            for digit in current_time:
+                for i in range(5):
+                    lines[i] += digits[digit][i] + "  "
+            
+            for i, line in enumerate(lines):
+                stdscr.addstr(i + 2, 5, line)  # Positioning on screen
+            
+            stdscr.refresh()
+            last_time = current_time  # Store last displayed time
 
-        lines = ["", "", "", "", ""]
-        for digit in current_time:
-            for i in range(5):
-                lines[i] += digits[digit][i] + "  "
+        if stdscr.getch() == ord('q'):  # Allow quitting with 'q'
+            break
 
-        for line in lines:
-            print(selected_color + line + COLORS["reset"])
-
-        time.sleep(1)
+def main():
+    curses.wrapper(display_time)
 
 if __name__ == "__main__":
-    display_time()
+    main()
