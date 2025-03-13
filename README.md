@@ -18,13 +18,7 @@ If you're using **Windows**, install the `windows-curses` package:
 pip install windows-curses
 ```
 
-## Example
-
-```sh
-python clk.py -r
-```
-
-##Usage
+## Usage
 
 Run the script with an optional color argument:
 
