@@ -23,7 +23,7 @@ pip install windows-curses
 Run the script with an optional color argument:
 
 ```sh
-python clock.py [-r | -g | -b | -y | -m | -c | -w]
+python clock.py [ -r | -g | -b | -y | -m | -c | -w ]
 ```
 
 ## Color Options:
