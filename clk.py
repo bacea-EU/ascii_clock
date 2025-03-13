@@ -1,6 +1,9 @@
 import time
 import os
 import sys
+import curses
+
+# !!! pip install windows-curses !!!
 
 # ANSI color codes
 COLORS = {
@@ -102,29 +105,33 @@ digits = {
     ]
 }
 
-def clear_screen():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-def display_time():
+def display_time(stdscr):
+    curses.curs_set(0)  # Hide cursor
+    stdscr.nodelay(1)   # Non-blocking input
+    stdscr.timeout(100) # Refresh rate (100ms for smoothness)
     last_time = ""
     while True:
         current_time = time.strftime("%H:%M:%S")
         
         if current_time != last_time:  # Update only if time has changed
-            clear_screen()
+            stdscr.clear()
             lines = ["", "", "", "", ""]
             
             for digit in current_time:
                 for i in range(5):
                     lines[i] += digits[digit][i] + "  "
             
-            for line in lines:
-                print(selected_color + line + COLORS["reset"])
+            for i, line in enumerate(lines):
+                stdscr.addstr(i + 2, 5, line)  # Positioning on screen
             
+            stdscr.refresh()
             last_time = current_time  # Store last displayed time
 
+        if stdscr.getch() == ord('q'):  # Allow quitting with 'q'
+            break
+
 def main():
-    display_time()
+    curses.wrapper(display_time)
 
 if __name__ == "__main__":
     main()
