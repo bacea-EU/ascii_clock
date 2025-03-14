@@ -1,28 +1,24 @@
 import time
-import os
 import sys
 import curses
 
-# !!! pip install windows-curses !!!
-
-# ANSI color codes
-COLORS = {
-    "-r": "\033[91m",  # Red
-    "-g": "\033[92m",  # Green
-    "-b": "\033[94m",  # Blue
-    "-y": "\033[93m",  # Yellow
-    "-m": "\033[95m",  # Magenta
-    "-c": "\033[96m",  # Cyan
-    "-w": "\033[97m",  # White
-    "reset": "\033[0m"  # Reset color
+# Define color mappings for curses
+COLOR_MAPPING = {
+    "-r": curses.COLOR_RED,
+    "-g": curses.COLOR_GREEN,
+    "-b": curses.COLOR_BLUE,
+    "-y": curses.COLOR_YELLOW,
+    "-m": curses.COLOR_MAGENTA,
+    "-c": curses.COLOR_CYAN,
+    "-w": curses.COLOR_WHITE
 }
 
 # Default color
-selected_color = COLORS["-w"]
+selected_color = "-w"  # White
 
-# Color argument
-if len(sys.argv) > 1 and sys.argv[1] in COLORS:
-    selected_color = COLORS[sys.argv[1]]
+# Color argument handling
+if len(sys.argv) > 1 and sys.argv[1] in COLOR_MAPPING:
+    selected_color = sys.argv[1]
 
 # Digit representation
 digits = {
@@ -106,17 +102,21 @@ digits = {
 }
 
 def display_time(stdscr):
+    curses.start_color()
+    curses.init_pair(1, COLOR_MAPPING[selected_color], curses.COLOR_BLACK)  # Set text color
+    color_pair = curses.color_pair(1)
+
     curses.curs_set(0)  # Hide cursor
     stdscr.nodelay(1)   # Non-blocking input
-    stdscr.timeout(100) # Refresh rate (100ms for smoothness)
+    stdscr.timeout(100)  # Refresh rate (100ms for smoothness)
+    
     last_time = ""
+
     while True:
         current_time = time.strftime("%H:%M:%S")
-        
 
-        if current_time != last_time:
-            clear_screen()
-
+        if current_time != last_time:  # Update only if time has changed
+            stdscr.clear()
             lines = ["", "", "", "", ""]
             
             for digit in current_time:
@@ -124,11 +124,10 @@ def display_time(stdscr):
                     lines[i] += digits[digit][i] + "  "
             
             for i, line in enumerate(lines):
-                stdscr.addstr(i + 2, 5, line)  # Positioning on screen
+                stdscr.addstr(i + 2, 5, line, color_pair)  # Apply color
             
-            last_time = current_time  
-
-
+            stdscr.refresh()
+            last_time = current_time  # Store last displayed time
 
         if stdscr.getch() == ord('q'):  # Allow quitting with 'q'
             break
