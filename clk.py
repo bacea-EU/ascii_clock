@@ -113,8 +113,10 @@ def display_time(stdscr):
     while True:
         current_time = time.strftime("%H:%M:%S")
         
-        if current_time != last_time:  # Update only if time has changed
-            stdscr.clear()
+
+        if current_time != last_time:
+            clear_screen()
+
             lines = ["", "", "", "", ""]
             
             for digit in current_time:
@@ -124,8 +126,9 @@ def display_time(stdscr):
             for i, line in enumerate(lines):
                 stdscr.addstr(i + 2, 5, line)  # Positioning on screen
             
-            stdscr.refresh()
-            last_time = current_time  # Store last displayed time
+            last_time = current_time  
+
+
 
         if stdscr.getch() == ord('q'):  # Allow quitting with 'q'
             break
