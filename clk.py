@@ -110,7 +110,7 @@ def display_time():
     while True:
         current_time = time.strftime("%H:%M:%S")
         
-        if current_time != last_time:  # Update only if time has changed
+        if current_time != last_time:
             clear_screen()
             lines = ["", "", "", "", ""]
             
@@ -121,7 +121,7 @@ def display_time():
             for line in lines:
                 print(selected_color + line + COLORS["reset"])
             
-            last_time = current_time  # Store last displayed time
+            last_time = current_time  
 
 def main():
     display_time()
