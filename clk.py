@@ -113,6 +113,7 @@ def display_time(stdscr):
     last_time = ""
 
     while True:
+        height, width = stdscr.getmaxyx()  # Get screen size
         current_time = time.strftime("%H:%M:%S")
 
         if current_time != last_time:  # Update only if time has changed
@@ -123,8 +124,13 @@ def display_time(stdscr):
                 for i in range(5):
                     lines[i] += digits[digit][i] + "  "
             
+            # Calculate center position
+            clock_width = len(lines[0])
+            start_x = (width - clock_width) // 2
+            start_y = (height - 5) // 2
+            
             for i, line in enumerate(lines):
-                stdscr.addstr(i + 2, 5, line, color_pair)  # Apply color
+                stdscr.addstr(start_y + i, start_x, line, color_pair)  # Apply color
             
             stdscr.refresh()
             last_time = current_time  # Store last displayed time
